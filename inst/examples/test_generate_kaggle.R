@@ -6,7 +6,7 @@ cat("=== sdR sd_generate() — Kaggle Test ===\n\n")
 print(sd_system_info())
 
 # Kaggle paths
-model_path <- "/kaggle/input/sd-models/v1-5-pruned-emaonly.safetensors"
+model_path <- "/kaggle/input/stable-diffusion-xl/pytorch/base-1-0/1/sd_xl_base_1.0.safetensors"
 out_dir <- "/kaggle/working"
 
 # Helper: save + display in notebook
@@ -21,7 +21,7 @@ show_image <- function(img, filename) {
 
 # --- 1. Basic 512x512 (direct) ---
 cat("\n--- 1. Basic 512x512 -> direct ---\n")
-ctx <- sd_ctx(model_path, n_threads = 4L, model_type = "sd1")
+ctx <- sd_ctx(model_path, n_threads = 4L, model_type = "sdxl", verbose = TRUE)
 t0 <- proc.time()
 imgs <- sd_generate(
   ctx,
@@ -40,7 +40,7 @@ rm(ctx); gc()
 
 # --- 2. 1024x1024, forced tiled VAE ---
 cat("\n--- 2. 1024x1024 -> tiled VAE ---\n")
-ctx <- sd_ctx(model_path, n_threads = 4L, model_type = "sd1")
+ctx <- sd_ctx(model_path, n_threads = 4L, model_type = "sdxl", verbose = TRUE)
 t0 <- proc.time()
 imgs_tiled <- sd_generate(
   ctx,
@@ -60,8 +60,8 @@ rm(ctx); gc()
 
 # --- 3. 2048x1024 -> auto highres fix ---
 cat("\n--- 3. 2048x1024 -> auto highres fix ---\n")
-ctx <- sd_ctx(model_path, n_threads = 4L, model_type = "sd1",
-              vae_decode_only = FALSE)
+ctx <- sd_ctx(model_path, n_threads = 4L, model_type = "sdxl",
+              vae_decode_only = FALSE, verbose = TRUE)
 t0 <- proc.time()
 imgs_hr <- sd_generate(
   ctx,
@@ -81,8 +81,8 @@ rm(ctx); gc()
 
 # --- 4. img2img 512x512 (direct) ---
 cat("\n--- 4. img2img 512x512 -> direct ---\n")
-ctx <- sd_ctx(model_path, n_threads = 4L, model_type = "sd1",
-              vae_decode_only = FALSE)
+ctx <- sd_ctx(model_path, n_threads = 4L, model_type = "sdxl",
+              vae_decode_only = FALSE, verbose = TRUE)
 t0 <- proc.time()
 refined <- sd_generate(
   ctx,
@@ -134,7 +134,7 @@ if (n_gpu > 1L) {
     prompts = multi_prompts,
     negative_prompt = "blurry, bad quality",
     width = 512L, height = 512L,
-    model_type = "sd1",
+    model_type = "sdxl",
     sample_steps = 20L, cfg_scale = 7.0,
     sample_method = SAMPLE_METHOD$EULER,
     scheduler = SCHEDULER$DISCRETE
