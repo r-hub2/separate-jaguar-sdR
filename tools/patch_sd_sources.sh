@@ -73,7 +73,17 @@ sed -i \
   's/while (i + 1 < res\.size())/while ((size_t)(i + 1) < res.size())/' \
   "$SD_DIR/util.cpp" && echo "  patched: util.cpp (sign-compare)"
 
-# 3c. model.h: unused function sd_version_is_inpaint_or_unet_edit
+# 3c. ggml_extend.hpp: sign-compare (int vs size_t for N)
+sed -i \
+  's/for (int i = 0; i < N; ++i) {/for (size_t i = 0; i < N; ++i) {/' \
+  "$SD_DIR/ggml_extend.hpp" && echo "  patched: ggml_extend.hpp (sign-compare N)"
+
+# 3d. ggml_extend.hpp: unused variable 'param' in get_param_tensors
+sed -i \
+  '/struct ggml_tensor\* param    = pair\.second;/d' \
+  "$SD_DIR/ggml_extend.hpp" && echo "  patched: ggml_extend.hpp (unused variable param)"
+
+# 3e. model.h: unused function sd_version_is_inpaint_or_unet_edit
 sed -i \
   's/^static bool sd_version_is_inpaint_or_unet_edit/[[maybe_unused]] static bool sd_version_is_inpaint_or_unet_edit/' \
   "$SD_DIR/model.h" && echo "  patched: model.h (unused function)"

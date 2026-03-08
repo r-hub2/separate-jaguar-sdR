@@ -1525,7 +1525,7 @@ __STATIC_INLINE__ std::vector<float> timestep_embedding(std::vector<float> times
     for (int i = 0; i < half; ++i) {
         freqs[i] = (float)std::exp(-std::log(max_period) * i / half);
     }
-    for (int i = 0; i < N; ++i) {
+    for (size_t i = 0; i < N; ++i) {
         for (int j = 0; j < half; ++j) {
             float arg = timesteps[i] * freqs[j] * scale;
             if (flip_sin_to_cos) {
@@ -2211,7 +2211,6 @@ public:
         }
 
         for (auto& pair : params) {
-            struct ggml_tensor* param    = pair.second;
             tensors[prefix + pair.first] = pair.second;
         }
     }
