@@ -53,9 +53,10 @@ for (dev in seq(0L, max(0L, n_gpu - 1L))) {
 
   if (!is.null(imgs)) {
     img <- imgs[[1]]
+    img_arr <- sd_image_to_array(img)
     # Check if image is empty (all zeros or near-zero)
-    pixel_sum <- sum(abs(img$data))
-    pixel_mean <- mean(abs(img$data))
+    pixel_sum <- sum(img_arr)
+    pixel_mean <- mean(img_arr)
     cat(sprintf("  Device %d: %dx%d in %.1fs, pixel_sum=%.0f, pixel_mean=%.4f %s\n",
                 dev, img$width, img$height, elapsed, pixel_sum, pixel_mean,
                 if (pixel_mean < 0.01) "** EMPTY **" else "OK"))

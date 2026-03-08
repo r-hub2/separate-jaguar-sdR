@@ -115,6 +115,7 @@ elapsed <- (proc.time() - t0)[["elapsed"]]
 cat(sprintf("Generated %d image(s): %dx%d in %.1fs\n",
             length(imgs_1k), imgs_1k[[1]]$width, imgs_1k[[1]]$height, elapsed))
 show_image(imgs_1k[[1]], "sdR_gen_direct_1k.png")
+rm(ctx); gc()
 
 # --- 6. Multi-GPU (if available) ---
 n_gpu <- tryCatch(ggmlR::ggml_vulkan_device_count(), error = function(e) 1L)
@@ -154,7 +155,7 @@ if (n_gpu > 1L) {
 }
 
 # Cleanup
-rm(ctx, imgs, imgs_tiled, imgs_hr, refined, imgs_1k)
+rm(imgs, imgs_tiled, imgs_hr, refined, imgs_1k)
 gc()
 
 cat("\n=== Done ===\n")
