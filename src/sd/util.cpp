@@ -402,10 +402,10 @@ void pretty_progress(int step, int steps, float time) {
         unit  = "it/s";
     }
 #ifdef GGML_R_PACKAGE
-    printf("\r%s %i/%i - %.2f%s%s", progress.c_str(), step, steps, speed, unit, lf);
+    r_ggml_printf("\r%s %i/%i - %.2f%s%s", progress.c_str(), step, steps, speed, unit, lf);
 #else
-    printf("\r%s %i/%i - %.2f%s\033[K%s", progress.c_str(), step, steps, speed, unit, lf);
-    fflush(stdout);  // for linux
+    r_ggml_printf("\r%s %i/%i - %.2f%s\033[K%s", progress.c_str(), step, steps, speed, unit, lf);
+    r_ggml_fflush(NULL);  // for linux
 #endif
 }
 
