@@ -58,4 +58,24 @@ if [ -f "$SD_DIR/thirdparty/stb_image_resize.h" ]; then
   fi
 fi
 
+# --- 3. Fix compiler warnings (CRAN -Wall) ---
+
+# 3a. util.cpp: unused variable 'size2'
+sed -i \
+  's/int size2 = vsnprintf(buf\.data()/vsnprintf(buf.data()/' \
+  "$SD_DIR/util.cpp" && echo "  patched: util.cpp (unused variable size2)"
+
+# 3b. util.cpp: sign-compare warnings (int vs size_t)
+sed -i \
+  's/for (int p = start_position; p < res\.size()/for (size_t p = (size_t)start_position; p < res.size()/' \
+  "$SD_DIR/util.cpp"
+sed -i \
+  's/while (i + 1 < res\.size())/while ((size_t)(i + 1) < res.size())/' \
+  "$SD_DIR/util.cpp" && echo "  patched: util.cpp (sign-compare)"
+
+# 3c. model.h: unused function sd_version_is_inpaint_or_unet_edit
+sed -i \
+  's/^static bool sd_version_is_inpaint_or_unet_edit/[[maybe_unused]] static bool sd_version_is_inpaint_or_unet_edit/' \
+  "$SD_DIR/model.h" && echo "  patched: model.h (unused function)"
+
 echo "* Done."
