@@ -1,10 +1,12 @@
 # sdR
 
+[![R-hub check on the R Consortium cluster](https://github.com/r-hub2/separate-jaguar-sdR/actions/workflows/rhub-rc.yaml/badge.svg)](https://github.com/r-hub2/separate-jaguar-sdR/actions/workflows/rhub-rc.yaml)
+
 **sdR** is an R package that provides a native, GPU-accelerated Stable Diffusion pipeline by wrapping the C++ implementation from [stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp) and using [ggmlR](https://github.com/Zabis13/ggmlR) as the tensor backend.
 
 ## Overview
 
-sdR exposes a high-level R interface for text-to-image and image-to-image generation, while all heavy computation (tokenization, encoders, denoiser, sampler, VAE, model loading) is implemented in C++. The package targets local inference on Linux with Vulkan-enabled AMD GPUs (with automatic CPU fallback via ggml), without relying on external Python or web APIs.
+sdR exposes a high-level R interface for text-to-image and image-to-image generation, while all heavy computation (tokenization, encoders, denoiser, sampler, VAE, model loading) is implemented in C++. Supports SD 1.x, SD 2.x, SDXL, and Flux model families. Targets local inference on Linux with Vulkan-enabled AMD GPUs (with automatic CPU fallback via ggml), without relying on external Python or web APIs.
 
 ## Architecture
 
@@ -18,7 +20,7 @@ sdR exposes a high-level R interface for text-to-image and image-to-image genera
 - **CRAN-ready defaults**: `verbose = FALSE` by default — no console output unless explicitly enabled. Cross-platform build system with `configure`/`configure.win` generating `Makevars` from templates.
 - **VRAM-aware auto-routing**: estimates VRAM from resolution and routes to direct generation (fits in VRAM), highres fix (txt2img + upscale + tiled img2img, preferred for coherent large images), or tiled sampling (MultiDiffusion fallback). Set `vram_gb` once in `sd_ctx()`.
 - **Multi-GPU**: `sd_generate_multi_gpu()` distributes prompts across Vulkan GPUs via `callr`, one process per GPU, with progress reporting.
-- **Text-to-image** generation supporting Stable Diffusion 1.x models (e.g. SD 1.5) with typical 512x512 generations taking a few seconds on Vulkan-enabled GPUs.
+- **Text-to-image** generation supporting Stable Diffusion 1.x, 2.x, SDXL, and Flux models with typical generations taking a few seconds on Vulkan-enabled GPUs.
 - **Image-to-image** workflows with noise strength control and reuse of the same denoising pipeline as text-to-image. Requires `vae_decode_only = FALSE` in context.
 - **Optional upscaling** using a dedicated upscaler context managed entirely in C++ and exposed to R through external pointers.
 - **Tiled VAE** for high-resolution images (2K, 4K+) with bounded VRAM usage. `vae_mode = "auto"` enables tiling automatically when image area exceeds a configurable threshold. Supports per-axis relative tile sizing (`vae_tile_rel_x`, `vae_tile_rel_y`) for non-square aspect ratios.
